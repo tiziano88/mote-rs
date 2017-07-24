@@ -4,19 +4,21 @@ extern crate rgb;
 
 use std::io::Write;
 
-const black: rgb::RGB8 = rgb::RGB8 { r: 0, g: 0, b: 0 };
+const BLACK: rgb::RGB8 = rgb::RGB8 { r: 0, g: 0, b: 0 };
 
-const red: rgb::RGB8 = rgb::RGB8 {
+const RED: rgb::RGB8 = rgb::RGB8 {
     r: 255,
     g: 0,
     b: 0,
 };
-const green: rgb::RGB8 = rgb::RGB8 {
+
+const GREEN: rgb::RGB8 = rgb::RGB8 {
     r: 0,
     g: 255,
     b: 0,
 };
-const blue: rgb::RGB8 = rgb::RGB8 {
+
+const BLUE: rgb::RGB8 = rgb::RGB8 {
     r: 0,
     g: 0,
     b: 255,
@@ -28,7 +30,8 @@ struct Mote {
 
 impl Mote {
     pub fn new(path: &str) -> Mote {
-        let mote = Mote { port: serial_unix::TTYPort::open(std::path::Path::new(path)).unwrap() };
+        let mut mote =
+            Mote { port: serial_unix::TTYPort::open(std::path::Path::new(path)).unwrap() };
         mote.init();
         mote.clear();
         mote
@@ -42,7 +45,7 @@ impl Mote {
     }
 
     pub fn clear(&mut self) {
-        self.write(&[black; 16 * 4])
+        self.write(&[BLACK; 16 * 4])
     }
 
     fn configure_channel(&mut self, channel: u8, num_pixels: u8, gamma_correction: bool) {
@@ -61,14 +64,14 @@ impl Mote {
         // 'o'
         self.port.write(&[0x6F]).unwrap();
         for pixel in pixels {
-            self.port.write(&[pixel.r, pixel.g, pixel.b]).unwrap();
+            self.port.write(&[pixel.b, pixel.g, pixel.r]).unwrap();
         }
     }
 }
 
 #[test]
 fn it_works() {
-    let mote = Mote { path: "/dev/ttyACM0".to_string() };
+    let mut mote = Mote::new("/dev/ttyACM0");
     mote.clear();
-    mote.write(&[red; 16 * 4])
+    mote.write(&[RED; 16 * 4]);
 }
