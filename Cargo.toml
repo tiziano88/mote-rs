@@ -1,7 +1,15 @@
 [package]
 name = "mote"
 version = "0.1.0"
+keywords = ["led", "raspberry", "pi", "mote", "strip"]
+repository = "https://github.com/tiziano88/mote-rs"
+homepage = "https://github.com/tiziano88/mote-rs"
 authors = ["Tiziano Santoro <tiziano88@gmail.com>"]
+documentation = "https://tiziano88.github.io/mote-rs/mote/index.html"
+license = "MIT"
+description = """
+Mote library.
+"""
 
 [dependencies]
 serial = "0.4.0"
