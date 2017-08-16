@@ -12,8 +12,9 @@ pub struct Mote {
 
 impl Mote {
     pub fn new(path: &str) -> Mote {
-        let mut mote =
-            Mote { port: serial_unix::TTYPort::open(std::path::Path::new(path)).unwrap() };
+        let mut mote = Mote {
+            port: serial_unix::TTYPort::open(std::path::Path::new(path)).unwrap(),
+        };
         mote.init();
         mote.clear();
         mote
@@ -37,7 +38,9 @@ impl Mote {
         self.port.write(&[0x63]).unwrap();
         self.port.write(&[channel]).unwrap();
         self.port.write(&[num_pixels]).unwrap();
-        self.port.write(&[if gamma_correction { 1 } else { 0 }]).unwrap();
+        self.port
+            .write(&[if gamma_correction { 1 } else { 0 }])
+            .unwrap();
     }
 
     pub fn write(&mut self, pixels: &[rgb::RGB8]) {

@@ -4,23 +4,11 @@ extern crate rgb;
 
 use rand::distributions::IndependentSample;
 
-const RED: rgb::RGB8 = rgb::RGB8 {
-    r: 255,
-    g: 0,
-    b: 0,
-};
+const RED: rgb::RGB8 = rgb::RGB8 { r: 255, g: 0, b: 0 };
 
-const GREEN: rgb::RGB8 = rgb::RGB8 {
-    r: 0,
-    g: 255,
-    b: 0,
-};
+const GREEN: rgb::RGB8 = rgb::RGB8 { r: 0, g: 255, b: 0 };
 
-const BLUE: rgb::RGB8 = rgb::RGB8 {
-    r: 0,
-    g: 0,
-    b: 255,
-};
+const BLUE: rgb::RGB8 = rgb::RGB8 { r: 0, g: 0, b: 255 };
 
 const YELLOW: rgb::RGB8 = rgb::RGB8 {
     r: 255,
@@ -40,17 +28,20 @@ fn main() {
     let base = [RED; 16 * 4];
     mote.write(&base);
     let mut current = base;
-    for n in 0..30000 {
-        println!("i: {}", n);
+
+    let mut n = 0;
+    loop {
         if n % 2 == 0 {
+            n = 0;
             let i = between.ind_sample(&mut rng);
             current[i] = YELLOW;
         }
-        for i in 0..16*4 {
+        for i in 0..16 * 4 {
             current[i] = mean(current[i], base[i], 0.85);
         }
         mote.write(&current);
         std::thread::sleep(std::time::Duration::from_millis(10));
+        n += 1;
     }
 }
 

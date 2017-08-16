@@ -7,24 +7,23 @@ const WHITE: rgb::RGB8 = rgb::RGB8 {
     b: 255,
 };
 
-const BLACK: rgb::RGB8 = rgb::RGB8 {
-    r: 0,
-    g: 0,
-    b: 0,
-};
+const BLACK: rgb::RGB8 = rgb::RGB8 { r: 0, g: 0, b: 0 };
 
 fn main() {
     let mut mote = mote::Mote::new("/dev/ttyACM0");
     mote.clear();
 
     println!("start");
-    for n in 0..30000 {
-        println!("i: {}", n);
+
+    let mut n = 0;
+    loop {
         if n % 2 == 0 {
+            n = 0;
             mote.write(&[WHITE; 16 * 4]);
         } else {
             mote.write(&[BLACK; 16 * 4]);
         }
         std::thread::sleep(std::time::Duration::from_millis(10));
+        n += 1;
     }
 }
