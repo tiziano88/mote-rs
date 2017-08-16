@@ -33,7 +33,7 @@ fn main() {
     let mut mote = mote::Mote::new("/dev/ttyACM0");
     mote.clear();
 
-    let between = rand::distributions::Range::new(0, 16);
+    let between = rand::distributions::Range::new(0, 16 * 4);
     let mut rng = rand::thread_rng();
 
     println!("start");
@@ -42,12 +42,12 @@ fn main() {
     let mut current = base;
     for n in 0..30000 {
         println!("i: {}", n);
-        if n % 5 == 0 {
+        if n % 2 == 0 {
             let i = between.ind_sample(&mut rng);
             current[i] = YELLOW;
         }
-        for i in 0..16 {
-            current[i] = mean(current[i], base[i], 0.9);
+        for i in 0..16*4 {
+            current[i] = mean(current[i], base[i], 0.85);
         }
         mote.write(&current);
         std::thread::sleep(std::time::Duration::from_millis(10));
