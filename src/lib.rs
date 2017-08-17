@@ -11,20 +11,20 @@ pub struct Mote {
 }
 
 impl Mote {
-    pub fn new(path: &str) -> Mote {
+    pub fn new(path: &str, gamma_correction: bool) -> Mote {
         let mut mote = Mote {
             port: serial_unix::TTYPort::open(std::path::Path::new(path)).unwrap(),
         };
-        mote.init();
+        mote.init(gamma_correction);
         mote.clear();
         mote
     }
 
-    pub fn init(&mut self) {
-        self.configure_channel(1, 16, false);
-        self.configure_channel(2, 16, false);
-        self.configure_channel(3, 16, false);
-        self.configure_channel(4, 16, false);
+    pub fn init(&mut self, gamma_correction: bool) {
+        self.configure_channel(1, 16, gamma_correction);
+        self.configure_channel(2, 16, gamma_correction);
+        self.configure_channel(3, 16, gamma_correction);
+        self.configure_channel(4, 16, gamma_correction);
     }
 
     pub fn clear(&mut self) {

@@ -18,7 +18,7 @@ const YELLOW: rgb::RGB8 = rgb::RGB8 {
 
 
 fn main() {
-    let mut mote = mote::Mote::new("/dev/ttyACM0");
+    let mut mote = mote::Mote::new("/dev/ttyACM0", true);
     mote.clear();
 
     let between = rand::distributions::Range::new(0, 16 * 4);

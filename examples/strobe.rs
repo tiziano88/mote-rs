@@ -10,7 +10,7 @@ const WHITE: rgb::RGB8 = rgb::RGB8 {
 const BLACK: rgb::RGB8 = rgb::RGB8 { r: 0, g: 0, b: 0 };
 
 fn main() {
-    let mut mote = mote::Mote::new("/dev/ttyACM0");
+    let mut mote = mote::Mote::new("/dev/ttyACM0", true);
     mote.clear();
 
     println!("start");
