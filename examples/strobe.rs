@@ -19,9 +19,9 @@ fn main() {
     loop {
         if n % 2 == 0 {
             n = 0;
-            mote.write(&[WHITE; 16 * 4]);
+            mote.write(&[WHITE; mote::TOTAL_PIXELS]);
         } else {
-            mote.write(&[BLACK; 16 * 4]);
+            mote.write(&[BLACK; mote::TOTAL_PIXELS]);
         }
         std::thread::sleep(std::time::Duration::from_millis(10));
         n += 1;

@@ -21,11 +21,11 @@ fn main() {
     let mut mote = mote::Mote::new("/dev/ttyACM0", true);
     mote.clear();
 
-    let between = rand::distributions::Range::new(0, 16 * 4);
+    let between = rand::distributions::Range::new(0, mote::TOTAL_PIXELS);
     let mut rng = rand::thread_rng();
 
     println!("start");
-    let base = [RED; 16 * 4];
+    let base = [RED; mote::TOTAL_PIXELS];
     mote.write(&base);
     let mut current = base;
 
@@ -36,7 +36,7 @@ fn main() {
             let i = between.ind_sample(&mut rng);
             current[i] = YELLOW;
         }
-        for i in 0..16 * 4 {
+        for i in 0..mote::TOTAL_PIXELS {
             current[i] = mean(current[i], base[i], 0.85);
         }
         mote.write(&current);

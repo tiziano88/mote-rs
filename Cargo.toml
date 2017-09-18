@@ -1,6 +1,6 @@
 [package]
 name = "mote"
-version = "0.1.0"
+version = "0.1.1"
 keywords = ["led", "raspberry", "pi", "mote", "strip"]
 repository = "https://github.com/tiziano88/mote-rs"
 homepage = "https://github.com/tiziano88/mote-rs"
