@@ -61,6 +61,6 @@ impl Mote {
         for pixel in pixels.iter() {
             self.port.write(&[pixel.b, pixel.g, pixel.r]).unwrap();
         }
-        self.current = *pixels.clone();
+        self.current = pixels.clone();
     }
 }
