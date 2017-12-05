@@ -10,4 +10,6 @@ Official Python library: https://github.com/pimoroni/mote
 
 `cargo run --example solid`
 
+`cargo run --example sparkles`
+
 `cargo run --example strobe`
