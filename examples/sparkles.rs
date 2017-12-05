@@ -4,19 +4,9 @@ extern crate rgb;
 
 use rand::distributions::IndependentSample;
 
-const RED: rgb::RGB8 = rgb::RGB8 { r: 255, g: 0, b: 0 };
+const BACKGROUND: rgb::RGB8 = rgb::RGB8 { r: 20, g: 0, b: 0 };
 
-const GREEN: rgb::RGB8 = rgb::RGB8 { r: 0, g: 255, b: 0 };
-
-const BLUE: rgb::RGB8 = rgb::RGB8 { r: 0, g: 0, b: 255 };
-
-const YELLOW: rgb::RGB8 = rgb::RGB8 {
-    r: 255,
-    g: 255,
-    b: 0,
-};
-
-const WHITE: rgb::RGB8 = rgb::RGB8 {
+const FOREGROUND: rgb::RGB8 = rgb::RGB8 {
     r: 255,
     g: 255,
     b: 255,
@@ -31,7 +21,7 @@ fn main() {
     let mut rng = rand::thread_rng();
 
     println!("start");
-    let base = [RED; mote::TOTAL_PIXELS];
+    let base = [BACKGROUND; mote::TOTAL_PIXELS];
     mote.write(&base);
     let mut current = base;
 
@@ -40,13 +30,13 @@ fn main() {
         if n % 2 == 0 {
             n = 0;
             let i = between.ind_sample(&mut rng);
-            current[i] = WHITE;
+            current[i] = FOREGROUND;
         }
         for i in 0..mote::TOTAL_PIXELS {
-            current[i] = mean(current[i], base[i], 0.85);
+            current[i] = mean(current[i], base[i], 0.92);
         }
         mote.write(&current);
-        std::thread::sleep(std::time::Duration::from_millis(10));
+        std::thread::sleep(std::time::Duration::from_millis(1));
         n += 1;
     }
 }
