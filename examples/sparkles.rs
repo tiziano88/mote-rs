@@ -16,6 +16,12 @@ const YELLOW: rgb::RGB8 = rgb::RGB8 {
     b: 0,
 };
 
+const WHITE: rgb::RGB8 = rgb::RGB8 {
+    r: 255,
+    g: 255,
+    b: 255,
+};
+
 
 fn main() {
     let mut mote = mote::Mote::new("/dev/ttyACM0", true);
@@ -34,7 +40,7 @@ fn main() {
         if n % 2 == 0 {
             n = 0;
             let i = between.ind_sample(&mut rng);
-            current[i] = YELLOW;
+            current[i] = WHITE;
         }
         for i in 0..mote::TOTAL_PIXELS {
             current[i] = mean(current[i], base[i], 0.85);
