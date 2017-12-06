@@ -1,20 +1,27 @@
+extern crate getopts;
 extern crate mote;
 extern crate rand;
 extern crate rgb;
 
+use getopts::Options;
 use rand::distributions::IndependentSample;
+use std::env;
 
-const BACKGROUND: rgb::RGB8 = rgb::RGB8 { r: 20, g: 0, b: 0 };
+const BACKGROUND: rgb::RGB8 = rgb::RGB8 { r: 0, g: 20, b: 0 };
 
-const FOREGROUND: rgb::RGB8 = rgb::RGB8 {
-    r: 255,
-    g: 255,
-    b: 255,
-};
+const FOREGROUND: rgb::RGB8 = rgb::RGB8 { r: 0, g: 150, b: 0 };
 
 
 fn main() {
-    let mut mote = mote::Mote::new("/dev/ttyACM0", true);
+    let mut opts = Options::new();
+    opts.optopt("", "device", "device path", "FILE");
+    let matches = opts.parse(env::args()).unwrap();
+
+    let path = matches
+        .opt_str("device")
+        .unwrap_or("/dev/ttyACM0".to_string());
+
+    let mut mote = mote::Mote::new(&path, true);
     mote.clear();
 
     let between = rand::distributions::Range::new(0, mote::TOTAL_PIXELS);
