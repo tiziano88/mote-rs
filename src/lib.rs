@@ -1,6 +1,6 @@
-extern crate serial_unix;
-extern crate serial;
 extern crate rgb;
+extern crate serial;
+extern crate serial_unix;
 
 use std::io::Write;
 

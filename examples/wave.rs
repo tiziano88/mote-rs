@@ -16,7 +16,6 @@ const YELLOW: rgb::RGB8 = rgb::RGB8 {
     b: 0,
 };
 
-
 fn main() {
     let mut mote = mote::Mote::new("/dev/ttyACM0", true);
     mote.clear();

@@ -11,7 +11,6 @@ const BACKGROUND: rgb::RGB8 = rgb::RGB8 { r: 0, g: 20, b: 0 };
 
 const FOREGROUND: rgb::RGB8 = rgb::RGB8 { r: 0, g: 150, b: 0 };
 
-
 fn main() {
     let mut opts = Options::new();
     opts.optopt("", "device", "device path", "FILE");
