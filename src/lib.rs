@@ -38,10 +38,8 @@ impl Mote {
     }
 
     fn configure_channel(&mut self, channel: u8, num_pixels: u8, gamma_correction: bool) {
-        // 'mote'
-        self.port.write(&[0x6D, 0x6F, 0x74, 0x65]).unwrap();
-        // 'c'
-        self.port.write(&[0x63]).unwrap();
+        self.port.write(b"mote").unwrap();
+        self.port.write(b"c").unwrap();
         self.port.write(&[channel]).unwrap();
         self.port.write(&[num_pixels]).unwrap();
         self.port
@@ -54,10 +52,8 @@ impl Mote {
     }
 
     pub fn write(&mut self, pixels: &[rgb::RGB8; TOTAL_PIXELS]) {
-        // 'mote'
-        self.port.write(&[0x6D, 0x6F, 0x74, 0x65]).unwrap();
-        // 'o'
-        self.port.write(&[0x6F]).unwrap();
+        self.port.write(b"mote").unwrap();
+        self.port.write(b"o").unwrap();
         for pixel in pixels.iter() {
             self.port.write(&[pixel.b, pixel.g, pixel.r]).unwrap();
         }

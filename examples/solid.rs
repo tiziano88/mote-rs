@@ -17,6 +17,11 @@ const YELLOW: rgb::RGB8 = rgb::RGB8 {
 };
 
 fn main() {
+    let args = std::env::args().collect::<Vec<_>>();
+
+    let c = parse_color().unwrap_or(RED);
+    println!("color: {:?}", c);
+
     let mut mote = mote::Mote::new("/dev/ttyACM0", true);
     mote.clear();
 
@@ -24,6 +29,18 @@ fn main() {
     let mut rng = rand::thread_rng();
 
     println!("start");
-    let base = [RED; mote::TOTAL_PIXELS];
+    let base = [c; mote::TOTAL_PIXELS];
     mote.write(&base);
+}
+
+fn parse_color() -> Option<rgb::RGB8> {
+    let args = std::env::args().collect::<Vec<_>>();
+    if args.len() == 4 {
+        let r = args[1].parse::<u8>().ok()?;
+        let g = args[2].parse::<u8>().ok()?;
+        let b = args[3].parse::<u8>().ok()?;
+        Option::Some(rgb::RGB8 { r, g, b })
+    } else {
+        Option::None
+    }
 }
