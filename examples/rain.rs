@@ -33,9 +33,6 @@ fn main() {
     let mut current = [BACKGROUND; mote::TOTAL_PIXELS];
     mote.write(&current);
 
-    // Speed in pixels per cycle.
-    const SPEED: f32 = 0.5;
-
     let mut particles = Vec::<Particle>::new();
 
     let mut n = 0u64;
@@ -47,13 +44,7 @@ fn main() {
             });
         }
 
-        let mut mask = [BACKGROUND; mote::TOTAL_PIXELS];
-        for p in particles.iter() {
-            let x = ((n - p.creation_time) as f32 * SPEED) as usize;
-            if x < mask.len() {
-                mask[x] = p.color;
-            }
-        }
+        let mask = make_mask(&particles, n);
 
         for i in 0..mote::TOTAL_PIXELS {
             current[i] = add(current[i], mask[i]);
@@ -64,6 +55,19 @@ fn main() {
         std::thread::sleep(std::time::Duration::from_millis(100));
         n += 1;
     }
+}
+
+fn make_mask(particles: &Vec<Particle>, n: u64) -> [rgb::RGB8; mote::TOTAL_PIXELS] {
+    // Speed in pixels per cycle.
+    const SPEED: f32 = 0.5;
+    let mut mask = [BACKGROUND; mote::TOTAL_PIXELS];
+    for p in particles.iter() {
+        let x = ((n - p.creation_time) as f32 * SPEED) as usize;
+        if x < mask.len() {
+            mask[x] = p.color;
+        }
+    }
+    mask
 }
 
 fn random_color() -> rgb::RGB8 {
