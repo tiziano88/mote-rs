@@ -22,6 +22,20 @@ struct Particle {
     color: palette::rgb::LinSrgb,
 }
 
+struct Segment {
+    particles: Vec<Particle>,
+    pixels: Vec<palette::rgb::LinSrgb>,
+}
+
+impl Default for Segment {
+    fn default() -> Self {
+        Segment {
+            particles: vec![],
+            pixels: [BACKGROUND; mote::PIXELS_PER_CHANNEL as usize].to_vec(),
+        }
+    }
+}
+
 fn main() {
     let mut opts = Options::new();
     opts.optopt("", "device", "device path", "FILE");
@@ -37,30 +51,43 @@ fn main() {
     let dist = rand::distributions::Poisson::new(0.5);
     let mut rng = rand::thread_rng();
 
-    println!("start");
-    let mut current = [BACKGROUND; mote::TOTAL_PIXELS];
-    mote.write(&to_array(&current.iter().map(to_rgb).collect::<Vec<_>>()));
+    let mut segments = vec![
+        Segment::default(),
+        Segment::default(),
+        Segment::default(),
+        Segment::default(),
+    ];
 
-    let mut particles = Vec::<Particle>::new();
+    println!("start");
+    {
+        let blank = [BACKGROUND; mote::TOTAL_PIXELS];
+        mote.write(&to_array(&blank.iter().map(to_rgb).collect::<Vec<_>>()));
+    }
 
     let mut n = 0u64;
     loop {
-        if dist.sample(&mut rng) > 1 {
-            particles.push(Particle {
-                creation_time: n,
-                color: random_color(),
-            });
+        for i in 0..segments.len() {
+            let mut segment = &mut segments[i];
+            if dist.sample(&mut rng) > 1 {
+                segment.particles.push(Particle {
+                    creation_time: n,
+                    color: random_color(),
+                });
+            }
+            let mask = make_mask(&segment.particles, n);
+            for i in 0..mote::PIXELS_PER_CHANNEL as usize {
+                segment.pixels[i] = segment.pixels[i].screen(mask[i]);
+                segment.pixels[i] = segment.pixels[i].mix(&BACKGROUND, 0.20);
+            }
         }
 
-        let mask = make_mask(&particles, n);
+        let pixels = segments
+            .iter()
+            .flat_map(|x| x.pixels.clone())
+            .collect::<Vec<_>>();
+        mote.write(&to_array(&pixels.iter().map(to_rgb).collect::<Vec<_>>()));
 
-        for i in 0..mote::TOTAL_PIXELS {
-            current[i] = current[i].screen(mask[i]);
-            current[i] = current[i].mix(&BACKGROUND, 0.32);
-        }
-
-        mote.write(&to_array(&current.iter().map(to_rgb).collect::<Vec<_>>()));
-        std::thread::sleep(std::time::Duration::from_millis(100));
+        std::thread::sleep(std::time::Duration::from_millis(50));
         n += 1;
     }
 }
