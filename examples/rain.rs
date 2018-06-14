@@ -1,17 +1,25 @@
 extern crate getopts;
 extern crate mote;
+extern crate palette;
 extern crate rand;
 extern crate rgb;
 
 use getopts::Options;
-use rand::distributions::{Distribution, IndependentSample};
+use palette::blend::Blend;
+use palette::Mix;
+use rand::distributions::Distribution;
 use std::env;
 
-const BACKGROUND: rgb::RGB8 = rgb::RGB8 { r: 0, g: 0, b: 0 };
+const BACKGROUND: palette::rgb::LinSrgb = palette::rgb::LinSrgb {
+    red: 0.0,
+    green: 0.0,
+    blue: 0.0,
+    standard: std::marker::PhantomData,
+};
 
 struct Particle {
     creation_time: u64,
-    color: rgb::RGB8,
+    color: palette::rgb::LinSrgb,
 }
 
 fn main() {
@@ -26,12 +34,12 @@ fn main() {
     let mut mote = mote::Mote::new(&path, true);
     mote.clear();
 
-    let dist = rand::distributions::Poisson::new(0.4);
+    let dist = rand::distributions::Poisson::new(0.5);
     let mut rng = rand::thread_rng();
 
     println!("start");
     let mut current = [BACKGROUND; mote::TOTAL_PIXELS];
-    mote.write(&current);
+    mote.write(&to_array(&current.iter().map(to_rgb).collect::<Vec<_>>()));
 
     let mut particles = Vec::<Particle>::new();
 
@@ -47,17 +55,25 @@ fn main() {
         let mask = make_mask(&particles, n);
 
         for i in 0..mote::TOTAL_PIXELS {
-            current[i] = add(current[i], mask[i]);
-            current[i] = mean(current[i], BACKGROUND, 0.88);
+            current[i] = current[i].screen(mask[i]);
+            current[i] = current[i].mix(&BACKGROUND, 0.32);
         }
 
-        mote.write(&current);
+        mote.write(&to_array(&current.iter().map(to_rgb).collect::<Vec<_>>()));
         std::thread::sleep(std::time::Duration::from_millis(100));
         n += 1;
     }
 }
 
-fn make_mask(particles: &Vec<Particle>, n: u64) -> [rgb::RGB8; mote::TOTAL_PIXELS] {
+fn to_array(pixels: &[rgb::RGB8]) -> [rgb::RGB8; mote::TOTAL_PIXELS] {
+    let mut out = [to_rgb(&BACKGROUND); mote::TOTAL_PIXELS];
+    for i in 0..pixels.len() {
+        out[i] = pixels[i];
+    }
+    out
+}
+
+fn make_mask(particles: &Vec<Particle>, n: u64) -> [palette::rgb::LinSrgb; mote::TOTAL_PIXELS] {
     // Speed in pixels per cycle.
     const SPEED: f32 = 0.5;
     let mut mask = [BACKGROUND; mote::TOTAL_PIXELS];
@@ -70,35 +86,19 @@ fn make_mask(particles: &Vec<Particle>, n: u64) -> [rgb::RGB8; mote::TOTAL_PIXEL
     mask
 }
 
-fn random_color() -> rgb::RGB8 {
-    let between = rand::distributions::Range::<u8>::new(0, 255);
+fn random_color() -> palette::rgb::LinSrgb {
+    let between = rand::distributions::Uniform::new(0, 360);
     let mut rng = rand::thread_rng();
-    let r = between.ind_sample(&mut rng);
-    let g = between.ind_sample(&mut rng);
-    let b = between.ind_sample(&mut rng);
-    rgb::RGB8 { r, g, b }
+    let h = palette::RgbHue::<f32>::from_degrees(between.sample(&mut rng) as f32);
+    let s = 1.0;
+    let v = 0.5;
+    palette::Hsv::new(h, s, v).into()
 }
 
-fn mean(x: rgb::RGB8, y: rgb::RGB8, p: f32) -> rgb::RGB8 {
+fn to_rgb(c: &palette::rgb::LinSrgb) -> rgb::RGB8 {
     rgb::RGB8 {
-        r: (x.r as f32 * p + y.r as f32 * (1.0 - p)) as u8,
-        g: (x.g as f32 * p + y.g as f32 * (1.0 - p)) as u8,
-        b: (x.b as f32 * p + y.b as f32 * (1.0 - p)) as u8,
-    }
-}
-
-fn screen(x: rgb::RGB8, y: rgb::RGB8) -> rgb::RGB8 {
-    rgb::RGB8 {
-        r: 255 - (255 - x.r) * (255 - y.r),
-        g: 255 - (255 - x.g) * (255 - y.g),
-        b: 255 - (255 - x.b) * (255 - y.b),
-    }
-}
-
-fn add(x: rgb::RGB8, y: rgb::RGB8) -> rgb::RGB8 {
-    rgb::RGB8 {
-        r: std::cmp::min(x.r as u16 + y.r as u16, 255) as u8,
-        g: std::cmp::min(x.g as u16 + y.g as u16, 255) as u8,
-        b: std::cmp::min(x.b as u16 + y.b as u16, 255) as u8,
+        r: (c.red * 255.0) as u8,
+        g: (c.green * 255.0) as u8,
+        b: (c.blue * 255.0) as u8,
     }
 }
