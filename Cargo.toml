@@ -14,7 +14,7 @@ Mote library.
 [dependencies]
 serial = "0.4.0"
 serial-unix = "0.4.0"
-rgb = "0.7.0"
+rgb = "0.8.13"
 
 [dev-dependencies]
 rand = "0.5"
