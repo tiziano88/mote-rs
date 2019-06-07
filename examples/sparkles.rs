@@ -4,7 +4,7 @@ extern crate rand;
 extern crate rgb;
 
 use getopts::Options;
-use rand::distributions::IndependentSample;
+use rand::distributions::{Distribution, Uniform};
 use std::env;
 
 const BACKGROUND: rgb::RGB8 = rgb::RGB8 { r: 0, g: 20, b: 0 };
@@ -23,7 +23,7 @@ fn main() {
     let mut mote = mote::Mote::new(&path, true);
     mote.clear();
 
-    let between = rand::distributions::Range::new(0, mote::TOTAL_PIXELS);
+    let between = Uniform::new(0, mote::TOTAL_PIXELS);
     let mut rng = rand::thread_rng();
 
     println!("start");
@@ -35,7 +35,7 @@ fn main() {
     loop {
         if n % 2 == 0 {
             n = 0;
-            let i = between.ind_sample(&mut rng);
+            let i = between.sample(&mut rng);
             current[i] = FOREGROUND;
         }
         for i in 0..mote::TOTAL_PIXELS {

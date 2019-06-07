@@ -1,8 +1,5 @@
 extern crate mote;
-extern crate rand;
 extern crate rgb;
-
-use rand::distributions::IndependentSample;
 
 const RED: rgb::RGB8 = rgb::RGB8 { r: 255, g: 0, b: 0 };
 
@@ -17,16 +14,11 @@ const YELLOW: rgb::RGB8 = rgb::RGB8 {
 };
 
 fn main() {
-    let args = std::env::args().collect::<Vec<_>>();
-
     let c = parse_color().unwrap_or(RED);
     println!("color: {:?}", c);
 
     let mut mote = mote::Mote::new("/dev/ttyACM0", true);
     mote.clear();
-
-    let between = rand::distributions::Range::new(0, mote::TOTAL_PIXELS);
-    let mut rng = rand::thread_rng();
 
     println!("start");
     let base = [c; mote::TOTAL_PIXELS];
