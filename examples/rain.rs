@@ -66,8 +66,7 @@ fn main() {
 
     let mut n = 0u64;
     loop {
-        for i in 0..segments.len() {
-            let mut segment = &mut segments[i];
+        for segment in segments.iter_mut() {
             if dist.sample(&mut rng) > 1 {
                 segment.particles.push(Particle {
                     creation_time: n,
