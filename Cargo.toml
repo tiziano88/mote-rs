@@ -17,6 +17,6 @@ serial-unix = "0.4"
 rgb = "0.8"
 
 [dev-dependencies]
-rand = "0.6"
+rand = "0.7"
 getopts = "0.2"
 palette = "0.4"
