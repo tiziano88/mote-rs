@@ -2,12 +2,13 @@ extern crate getopts;
 extern crate mote;
 extern crate palette;
 extern crate rand;
+extern crate rand_distr;
 extern crate rgb;
 
 use getopts::Options;
 use palette::blend::Blend;
 use palette::Mix;
-use rand::distributions::Distribution;
+use rand_distr::Distribution;
 use std::env;
 
 const BACKGROUND: palette::rgb::LinSrgb = palette::rgb::LinSrgb {
@@ -48,7 +49,7 @@ fn main() {
     let mut mote = mote::Mote::new(&path, true);
     mote.clear();
 
-    let dist = rand::distributions::Poisson::new(0.5);
+    let dist = rand_distr::Poisson::new(0.5).unwrap();
     let mut rng = rand::thread_rng();
 
     let mut segments = vec![
@@ -67,7 +68,8 @@ fn main() {
     let mut n = 0u64;
     loop {
         for segment in segments.iter_mut() {
-            if dist.sample(&mut rng) > 1 {
+            let v: u64 = dist.sample(&mut rng);
+            if v > 1 {
                 segment.particles.push(Particle {
                     creation_time: n,
                     color: random_color(),

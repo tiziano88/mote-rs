@@ -12,11 +12,12 @@ Mote library.
 """
 
 [dependencies]
-serial = "0.4"
-serial-unix = "0.4"
-rgb = "0.8"
+serial = "*"
+serial-unix = "*"
+rgb = "*"
 
 [dev-dependencies]
-rand = "0.7"
-getopts = "0.2"
-palette = "0.4"
+rand = "*"
+rand_distr = "*"
+getopts = "*"
+palette = "*"
