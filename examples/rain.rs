@@ -93,13 +93,11 @@ fn main() {
 
 fn to_array(pixels: &[rgb::RGB8]) -> [rgb::RGB8; mote::TOTAL_PIXELS] {
     let mut out = [to_rgb(&BACKGROUND); mote::TOTAL_PIXELS];
-    for i in 0..pixels.len() {
-        out[i] = pixels[i];
-    }
+    out.clone_from_slice(pixels);
     out
 }
 
-fn make_mask(particles: &Vec<Particle>, n: u64) -> [palette::rgb::LinSrgb; mote::TOTAL_PIXELS] {
+fn make_mask(particles: &[Particle], n: u64) -> [palette::rgb::LinSrgb; mote::TOTAL_PIXELS] {
     // Speed in pixels per cycle.
     const SPEED: f32 = 0.5;
     let mut mask = [BACKGROUND; mote::TOTAL_PIXELS];

@@ -38,12 +38,12 @@ impl Mote {
     }
 
     fn configure_channel(&mut self, channel: u8, num_pixels: u8, gamma_correction: bool) {
-        self.port.write(b"mote").unwrap();
-        self.port.write(b"c").unwrap();
-        self.port.write(&[channel]).unwrap();
-        self.port.write(&[num_pixels]).unwrap();
+        self.port.write_all(b"mote").unwrap();
+        self.port.write_all(b"c").unwrap();
+        self.port.write_all(&[channel]).unwrap();
+        self.port.write_all(&[num_pixels]).unwrap();
         self.port
-            .write(&[if gamma_correction { 1 } else { 0 }])
+            .write_all(&[if gamma_correction { 1 } else { 0 }])
             .unwrap();
     }
 
@@ -52,11 +52,11 @@ impl Mote {
     }
 
     pub fn write(&mut self, pixels: &[rgb::RGB8; TOTAL_PIXELS]) {
-        self.port.write(b"mote").unwrap();
-        self.port.write(b"o").unwrap();
+        self.port.write_all(b"mote").unwrap();
+        self.port.write_all(b"o").unwrap();
         for pixel in pixels.iter() {
-            self.port.write(&[pixel.b, pixel.g, pixel.r]).unwrap();
+            self.port.write_all(&[pixel.b, pixel.g, pixel.r]).unwrap();
         }
-        self.current = pixels.clone();
+        self.current = *pixels;
     }
 }
