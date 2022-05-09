@@ -49,7 +49,7 @@ fn main() {
     let mut mote = mote::Mote::new(&path, true);
     mote.clear();
 
-    let dist = rand_distr::Poisson::new(0.5).unwrap();
+    let dist = rand_distr::Poisson::new(0.5f32).unwrap();
     let mut rng = rand::thread_rng();
 
     let mut segments = vec![
@@ -68,8 +68,8 @@ fn main() {
     let mut n = 0u64;
     loop {
         for segment in segments.iter_mut() {
-            let v: u64 = dist.sample(&mut rng);
-            if v > 1 {
+            let v: f32 = dist.sample(&mut rng);
+            if v > 1.0 {
                 segment.particles.push(Particle {
                     creation_time: n,
                     color: random_color(),
@@ -113,9 +113,9 @@ fn make_mask(particles: &[Particle], n: u64) -> [palette::rgb::LinSrgb; mote::TO
 }
 
 fn random_color() -> palette::rgb::LinSrgb {
-    let between = rand::distributions::Uniform::new(0, 360);
+    let between = rand::distributions::Uniform::new(0f32, 360f32);
     let mut rng = rand::thread_rng();
-    let h = palette::RgbHue::<f32>::from_degrees(between.sample(&mut rng) as f32);
+    let h = palette::RgbHue::<f32>::from_degrees(between.sample(&mut rng));
     let s = 1.0;
     let v = 0.5;
     palette::Hsv::new(h, s, v).into()
